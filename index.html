@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="MainApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex.No: 08 - Working with AngularJS Directives</title>
+    <!-- AngularJS CDN -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .card {
+            background: #ffffff;
+            width: 100%;
+            max-width: 650px;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-bottom: 25px;
+            box-sizing: border-box;
+        }
+        .header {
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            font-weight: bold;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            background-color: #007bff;
+        }
+        .form-group {
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label, h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 6px;
+        }
+        input[type="text"], input[type="number"], textarea, select {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+            width: 100%;
+        }
+        textarea {
+            resize: vertical;
+            height: 80px;
+        }
+        button {
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 8px;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        ul {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+        li {
+            margin-bottom: 6px;
+            font-size: 14px;
+            color: #444;
+        }
+        .delete-btn {
+            float: right;
+            color: #dc3545;
+            text-decoration: none;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .delete-btn:hover {
+            color: #a71d2a;
+        }
+        .calc-result {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #007bff;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ================= 1. SIMPLE COMMENT BOX ================= -->
+    <div class="card" ng-controller="CommentController">
+        <div class="header">1. Simple Comment Box using Controller[cite: 7]</div>
+        
+        <div class="form-group">
+            <label>Post your Comment</label>
+            <textarea ng-model="txtcomment" placeholder="Your Comment"></textarea>
+            <button ng-click="btn_add()" style="width: 120px;">Post Comment</button>
+        </div>
+
+        <h4>Comments</h4>
+        <ul>
+            <li ng-repeat="comnt in comment">
+                {{ comnt }} 
+                <a class="delete-btn" ng-click="remItem($index)">x</a>
+            </li>
+        </ul>
+    </div>
+
+
+    <!-- ================= 2. SIMPLE CALCULATOR ================= -->
+    <div class="card" ng-controller="CalculatorController">
+        <div class="header" style="background-color: #6f42c1;">2. Simple Calculator[cite: 8]</div>
+        
+        <div class="form-group">
+            <label>Number 1</label>
+            <input type="number" ng-model="a" placeholder="Enter first number">
+        </div>
+        <div class="form-group">
+            <label>Number 2</label>
+            <input type="number" ng-model="b" placeholder="Enter second number">
+        </div>
+        <div class="form-group">
+            <label>Operator</label>
+            <select ng-model="operator">
+                <option value="+">+</option>
+                <option value="-">-</option>
+                <option value="*">*</option>
+                <option value="/">/</option>
+            </select>
+        </div>
+
+        <div class="calc-result">
+            Result: {{ result() }}
+        </div>
+    </div>
+
+
+    <!-- ================= 3. SIMPLE TO-DO LIST ================= -->
+    <div class="card" ng-controller="TodoController">
+        <div class="header" style="background-color: #fd7e14;">3. Simple To-Do List[cite: 9]</div>
+        
+        <div class="form-group">
+            <label>Task Title</label>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" ng-model="title" placeholder="Enter new task">
+                <button ng-click="add()" style="margin-top: 0;">Add</button>
+            </div>
+        </div>
+
+        <ul>
+            <li ng-repeat="t in tasks">{{ t }}</li>
+        </ul>
+    </div>
+
+
+    <!-- ================= ANGULARJS MODULE AND CONTROLLERS ================= -->
+    <script>
+        var app = angular.module('MainApp', []);
+
+        // 1. Comment Controller
+        app.controller('CommentController', function($scope) {
+            $scope.comment = [];
+            $scope.btn_add = function() {
+                if ($scope.txtcomment && $scope.txtcomment.trim() !== "") {
+                    $scope.comment.push($scope.txtcomment);
+                    $scope.txtcomment = "";
+                }
+            };
+            $scope.remItem = function($index) {
+                $scope.comment.splice($index, 1);
+            };
+        });
+
+        // 2. Calculator Controller
+        app.controller('CalculatorController', function($scope) {
+            $scope.operator = '+';
+            $scope.result = function() {
+                let num1 = parseFloat($scope.a) || 0;
+                let num2 = parseFloat($scope.b) || 0;
+                
+                if ($scope.operator == '+') return num1 + num2;
+                if ($scope.operator == '-') return num1 - num2;
+                if ($scope.operator == '*') return num1 * num2;
+                if ($scope.operator == '/') return num2 !== 0 ? num1 / num2 : 'Infinity';
+            };
+        });
+
+        // 3. To-Do List Controller
+        app.controller('TodoController', function($scope) {
+            $scope.tasks = ['item1', 'item2'];
+            $scope.add = function() {
+                if ($scope.title && $scope.title.trim() !== "") {
+                    $scope.tasks.push($scope.title);
+                    $scope.title = "";
+                }
+            };
+        });
+    </script>
+</body>
+</html>
